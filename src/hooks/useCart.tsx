@@ -48,12 +48,12 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
 
       const amount = currentAmount + 1;
 
-      if(amount > stockAmount){
+      if (amount > stockAmount) {
         toast.error('Quantidade solicitada fora de estoque');
         return;
       }
 
-      if(productAlreadyExixst) {
+      if (productAlreadyExixst) {
         productAlreadyExixst.amount = amount;
       } else {
         const product = await api.get(`/products/${productId}`)
@@ -77,9 +77,19 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
 
   const removeProduct = (productId: number) => {
     try {
-      // TODO
+      const updatedCart = [...cart];
+      const productWillBeDeletedIndex = updatedCart.findIndex(product => product.id === productId);
+
+      if (productWillBeDeletedIndex >= 0) {
+        updatedCart.splice(productWillBeDeletedIndex, 1);
+        setCart(updatedCart);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedCart));
+      } else {
+        throw Error()
+      }
+
     } catch {
-      // TODO
+      toast.error('Erro na remoção do produto');
     }
   };
 
